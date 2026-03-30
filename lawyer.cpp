@@ -1,20 +1,17 @@
-﻿#include "lawyer.h"
+#include "lawyer.h"
 #include "case.h"
+#include <sstream>
 
 Lawyer::Lawyer(int id, const std::string& name, const Service& specialization)
-    : id(id), name(name), specialization(specialization), isAvailable(true) {
-}
-
-int Lawyer::getId() const {
-    return id;
-}
-
-std::string Lawyer::getName() const {
-    return name;
+    : Person(id, name), specialization(specialization), isAvailable(true) {
 }
 
 Service Lawyer::getSpecialization() const {
     return specialization;
+}
+
+void Lawyer::setSpecialization(const Service& spec) {
+    specialization = spec;
 }
 
 bool Lawyer::getAvailability() const {
@@ -26,11 +23,20 @@ void Lawyer::setAvailability(bool available) {
 }
 
 void Lawyer::addCase(const Case* caseObj) {
-    if (caseObj) { 
-        cases.push_back(caseObj); 
+    if (caseObj) {
+        cases.push_back(caseObj);
+        isAvailable = false;
     }
 }
 
 std::vector<const Case*> Lawyer::getCases() const {
-    return cases; 
+    return cases;
+}
+
+std::string Lawyer::getInfo() const {
+    std::ostringstream oss;
+    oss << "Адвокат ID: " << id << ", Имя: " << name 
+        << ", Специализация: " << specialization.getName()
+        << ", Доступен: " << (isAvailable ? "Да" : "Нет");
+    return oss.str();
 }
