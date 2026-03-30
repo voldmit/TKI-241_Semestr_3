@@ -1,282 +1,206 @@
-#include "../lawfirm3/legalfirm.h"
-
+#include "legalfirm.h"
 #include <iostream>
+#include <limits>
 
 enum Options {
-	EXIT,
-	TASK1,
-	TASK2,
-	TASK3,
-	TASK4,
-	TASK5,
-	TASK6
-	
+    EXIT,
+    TASK1,
+    TASK2,
+    TASK3,
+    TASK4,
+    TASK5,
+    TASK6,
+    TASK7,
+    TASK8
 };
 
-int main()
-{
-	
-	setlocale(LC_ALL, "Russian");
+int main() {
+    setlocale(LC_ALL, "Russian");
 
-	// Услуги
-	LegalFirm firm;
-	Service civilLaw(1, "Гражданские дела" , 5000.0);
-	Service criminalLaw(2, "Уголовные дела", 10000.0);
-	firm.addService(civilLaw);
-	firm.addService(criminalLaw);
-	// Клиенты
-	Client client1(101, "Иванов Вася", "ivan@mail.ru");
-	Client client2(102, "Сидоров Максим", "maks@mail.ru");
-	Client client3(103, "Антонов Василий", "vasya@mail.ru");
-	Client client4(104, "Спиридонов Виталий", "vitalik@mail.ru");
-	firm.addClient(client1);
-	firm.addClient(client2);
-	firm.addClient(client3);
-	firm.addClient(client4);
-	// Адвокаты
-	Lawyer lawyer1(201, "Петров Александр", civilLaw);
-	Lawyer lawyer2(202, "Ивашин Глеб", criminalLaw);
-	Lawyer lawyer3(203, "Николаев Роман", criminalLaw);
-	Lawyer lawyer4(204, "Смирнов Сергей", civilLaw);
-	firm.addLawyer(lawyer1);
-	firm.addLawyer(lawyer2);
-	firm.addLawyer(lawyer3);
-	firm.addLawyer(lawyer4);
-	// Дела
-	Case case1(1001, "Дело о разводе", &lawyer1, &client1);
-	Case case2(1002, "Дело о разделе имущества", &lawyer1, &client2);
-	Case case3(1003, "Кража", &lawyer2, &client3);
-	Case case4(1004, "Нападение", &lawyer2, &client4);
-	firm.addCase(case1);
-	firm.addCase(case2);
-	firm.addCase(case3);
-	firm.addCase(case4);
+    LegalFirm firm;
 
-	// Задания 
+    // РЈСЃР»СѓРіРё
+    Service civilLaw(1, "Р“СЂР°Р¶РґР°РЅСЃРєРёРµ РґРµР»Р°", 5000.0);
+    Service criminalLaw(2, "РЈРіРѕР»РѕРІРЅС‹Рµ РґРµР»Р°", 10000.0);
+    Service familyLaw(3, "РЎРµРјРµР№РЅС‹Рµ РґРµР»Р°", 7000.0);
+    
+    firm.addService(civilLaw);
+    firm.addService(criminalLaw);
+    firm.addService(familyLaw);
+    
+    // РџСЂРѕРІРµСЂРєР° СѓРЅРёРєР°Р»СЊРЅРѕСЃС‚Рё - СЌС‚РѕС‚ ID СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+    Service duplicateLaw(1, "Р”СѓР±Р»РёРєР°С‚", 1000.0);
+    firm.addService(duplicateLaw); // Р’С‹РІРµРґРµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ
 
-	Options choice;
-	do
-	{
-		std::cout << "Введите желаемую услугу:\n1.Показание списка услуг\n2.Клиенты по услуге\n3.Cвободные адвокаты по услуге\n4.Получить содержание дела по номеру\n5.Показать все дела клиента\n6.Показать все дела адвоката\n0.Выйти" << std::endl;
-		int input;
-		std::cin >> input;
-		choice = static_cast<Options>(input);
-		switch (choice) 
-		{
-		case TASK1: {
-			firm.showServices();
-			
-		}
-		case TASK2:
-		{
-			std::cout << "Введите id услуги по какому запросу нужно вывести клиентов \n";
-			int number1;
-			std::cin >> number1;
-			std::cout << "Список клиентов \n";
-			auto civilClients = firm.getClientsByService(number1);
-			for (const auto& client : civilClients)
-			{
-				std::cout << "ID: " << client.getId() << ", Имя: " << client.getName() << ", Контакты: " << client.getContactInfo() << "\n";
-			}
-			
-		}
-		case TASK3:
+    // РљР»РёРµРЅС‚С‹
+    Client client1(101, "РРІР°РЅРѕРІ РРІР°РЅ", "ivan@mail.ru");
+    Client client2(102, "РЎРёРґРѕСЂРѕРІ РњР°РєСЃРёРј", "maks@mail.ru");
+    Client client3(103, "РђРЅС‚РѕРЅРѕРІ Р’Р°СЃРёР»РёР№", "vasya@mail.ru");
+    Client client4(104, "РЎРїРёСЂРёРґРѕРЅРѕРІ Р’РёС‚Р°Р»РёР№", "vitalik@mail.ru");
+    
+    firm.addClient(client1);
+    firm.addClient(client2);
+    firm.addClient(client3);
+    firm.addClient(client4);
+    
+    // РџСЂРѕРІРµСЂРєР° СѓРЅРёРєР°Р»СЊРЅРѕСЃС‚Рё
+    Client duplicateClient(101, "Р”СѓР±Р»РёРєР°С‚", "dup@mail.ru");
+    firm.addClient(duplicateClient); // Р’С‹РІРµРґРµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ
 
-		{
-			int number2;
-			std::cout << "Введите id услуги: \n";
-			std::cin >> number2;
+    // РђРґРІРѕРєР°С‚С‹
+    Lawyer lawyer1(201, "РџРµС‚СЂРѕРІ РђР»РµРєСЃР°РЅРґСЂ", civilLaw);
+    Lawyer lawyer2(202, "РРІР°С€РёРЅ Р“Р»РµР±", criminalLaw);
+    Lawyer lawyer3(203, "РќРёРєРѕР»Р°РµРІ Р РѕРјР°РЅ", criminalLaw);
+    Lawyer lawyer4(204, "РЎРјРёСЂРЅРѕРІ РЎРµСЂРіРµР№", civilLaw);
+    
+    firm.addLawyer(lawyer1);
+    firm.addLawyer(lawyer2);
+    firm.addLawyer(lawyer3);
+    firm.addLawyer(lawyer4);
 
-			std::cout << "Список свободных адвокатов по услуге " << number2 << ":\n";
-			auto availableLawyers = firm.getAvailableLawyersByService(number2);
+    // Р”РµР»Р°
+    Case case1(1001, "Р”РµР»Рѕ Рѕ СЂР°Р·РІРѕРґРµ", &lawyer1, &client1);
+    Case case2(1002, "Р”РµР»Рѕ Рѕ СЂР°Р·РґРµР»Рµ РёРјСѓС‰РµСЃС‚РІР°", &lawyer1, &client2);
+    Case case3(1003, "РљСЂР°Р¶Р°", &lawyer2, &client3);
+    Case case4(1004, "РќР°РїР°РґРµРЅРёРµ", &lawyer2, &client4);
+    
+    firm.addCase(case1);
+    firm.addCase(case2);
+    firm.addCase(case3);
+    firm.addCase(case4);
+    
+    // РџСЂРѕРІРµСЂРєР° СѓРЅРёРєР°Р»СЊРЅРѕСЃС‚Рё РґРµР»Р°
+    Case duplicateCase(1001, "Р”СѓР±Р»РёРєР°С‚", &lawyer1, &client1);
+    firm.addCase(duplicateCase); // Р’С‹РІРµРґРµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ
 
-			if (availableLawyers.empty()) {
-				std::cout << "Свободных адвокатов по этой услуге нет.\n";
-			}
-			else {
-				for (const auto& lawyer : availableLawyers) {
-					std::cout << "ID: " << lawyer.getId()
-						<< ", Имя: " << lawyer.getName()
-						<< "\n";
-				}
-			}
-			
-		}
-		case TASK4:
-		{
-			int number3;
-			std::cout << "Введите номер дела \n";
-			std::cin >> number3;
+    Options choice;
+    do {
+        std::cout << "\n========================================\n";
+        std::cout << "Р’С‹Р±РµСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ:\n";
+        std::cout << "1. РџРѕРєР°Р·Р°С‚СЊ СЃРїРёСЃРѕРє СѓСЃР»СѓРі\n";
+        std::cout << "2. РџРѕРєР°Р·Р°С‚СЊ РІСЃРµС… РєР»РёРµРЅС‚РѕРІ\n";
+        std::cout << "3. РџРѕРєР°Р·Р°С‚СЊ РІСЃРµС… Р°РґРІРѕРєР°С‚РѕРІ\n";
+        std::cout << "4. РљР»РёРµРЅС‚С‹ РїРѕ СѓСЃР»СѓРіРµ\n";
+        std::cout << "5. РЎРІРѕР±РѕРґРЅС‹Рµ Р°РґРІРѕРєР°С‚С‹ РїРѕ СѓСЃР»СѓРіРµ\n";
+        std::cout << "6. РџРѕР»СѓС‡РёС‚СЊ СЃРѕРґРµСЂР¶Р°РЅРёРµ РґРµР»Р° РїРѕ РЅРѕРјРµСЂСѓ\n";
+        std::cout << "7. РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ РґРµР»Р° РєР»РёРµРЅС‚Р°\n";
+        std::cout << "8. РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ РґРµР»Р° Р°РґРІРѕРєР°С‚Р°\n";
+        std::cout << "0. Р’С‹Р№С‚Рё\n";
+        std::cout << "Р’Р°С€ РІС‹Р±РѕСЂ: ";
+        
+        int input;
+        std::cin >> input;
+        choice = static_cast<Options>(input);
+        
+        switch (choice) {
+            case TASK1: {
+                firm.showServices();
+                break;
+            }
+            case TASK2: {
+                firm.showAllClients();
+                break;
+            }
+            case TASK3: {
+                firm.showAllLawyers();
+                break;
+            }
+            case TASK4: {
+                std::cout << "Р’РІРµРґРёС‚Рµ ID СѓСЃР»СѓРіРё: ";
+                int serviceId;
+                std::cin >> serviceId;
+                
+                auto clients = firm.getClientsByService(serviceId);
+                if (clients.empty()) {
+                    std::cout << "РљР»РёРµРЅС‚РѕРІ РїРѕ СЌС‚РѕР№ СѓСЃР»СѓРіРµ РЅРµС‚.\n";
+                } else {
+                    std::cout << "РЎРїРёСЃРѕРє РєР»РёРµРЅС‚РѕРІ:\n";
+                    for (const auto& client : clients) {
+                        std::cout << client->getInfo() << "\n";
+                    }
+                }
+                break;
+            }
+            case TASK5: {
+                std::cout << "Р’РІРµРґРёС‚Рµ ID СѓСЃР»СѓРіРё: ";
+                int serviceId;
+                std::cin >> serviceId;
+                
+                auto lawyers = firm.getAvailableLawyersByService(serviceId);
+                if (lawyers.empty()) {
+                    std::cout << "РЎРІРѕР±РѕРґРЅС‹С… Р°РґРІРѕРєР°С‚РѕРІ РїРѕ СЌС‚РѕР№ СѓСЃР»СѓРіРµ РЅРµС‚.\n";
+                } else {
+                    std::cout << "РЎРїРёСЃРѕРє СЃРІРѕР±РѕРґРЅС‹С… Р°РґРІРѕРєР°С‚РѕРІ:\n";
+                    for (const auto& lawyer : lawyers) {
+                        std::cout << lawyer->getInfo() << "\n";
+                    }
+                }
+                break;
+            }
+            case TASK6: {
+                std::cout << "Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РґРµР»Р°: ";
+                int caseNumber;
+                std::cin >> caseNumber;
+                
+                try {
+                    Case caseInfo = firm.getCaseByNumber(caseNumber);
+                    std::cout << "РќРѕРјРµСЂ РґРµР»Р°: " << caseInfo.getCaseNumber() << "\n"
+                              << "РЎРѕРґРµСЂР¶Р°РЅРёРµ: " << caseInfo.getContent() << "\n"
+                              << "РђРґРІРѕРєР°С‚: " << caseInfo.getLawyer()->getName() << "\n"
+                              << "РљР»РёРµРЅС‚: " << caseInfo.getClient()->getName() << "\n";
+                } catch (const std::exception& e) {
+                    std::cerr << "РћС€РёР±РєР°: " << e.what() << "\n";
+                }
+                break;
+            }
+            case TASK7: {
+                std::cout << "Р’РІРµРґРёС‚Рµ ID РєР»РёРµРЅС‚Р°: ";
+                int clientId;
+                std::cin >> clientId;
+                
+                auto clientCases = firm.getClientCases(clientId);
+                if (clientCases.empty()) {
+                    std::cout << "РЈ РєР»РёРµРЅС‚Р° СЃ ID " << clientId << " РЅРµС‚ РґРµР».\n";
+                } else {
+                    std::cout << "Р”РµР»Р° РєР»РёРµРЅС‚Р° СЃ ID " << clientId << ":\n";
+                    for (const auto& casePtr : clientCases) {
+                        if (casePtr) {
+                            std::cout << "  - РќРѕРјРµСЂ: " << casePtr->getCaseNumber() 
+                                     << ", РЎРѕРґРµСЂР¶Р°РЅРёРµ: " << casePtr->getContent() << "\n";
+                        }
+                    }
+                }
+                break;
+            }
+            case TASK8: {
+                std::cout << "Р’РІРµРґРёС‚Рµ ID Р°РґРІРѕРєР°С‚Р°: ";
+                int lawyerId;
+                std::cin >> lawyerId;
+                
+                auto lawyerCases = firm.getLawyerCases(lawyerId);
+                if (lawyerCases.empty()) {
+                    std::cout << "РЈ Р°РґРІРѕРєР°С‚Р° СЃ ID " << lawyerId << " РЅРµС‚ РґРµР».\n";
+                } else {
+                    std::cout << "Р”РµР»Р° Р°РґРІРѕРєР°С‚Р° СЃ ID " << lawyerId << ":\n";
+                    for (const auto& casePtr : lawyerCases) {
+                        if (casePtr) {
+                            std::cout << "  - РќРѕРјРµСЂ: " << casePtr->getCaseNumber() 
+                                     << ", РЎРѕРґРµСЂР¶Р°РЅРёРµ: " << casePtr->getContent() << "\n";
+                        }
+                    }
+                }
+                break;
+            }
+            case EXIT: {
+                std::cout << "Р’С‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹.\n";
+                break;
+            }
+            default: {
+                std::cout << "РќРµРІРµСЂРЅС‹Р№ РІС‹Р±РѕСЂ! РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.\n";
+                break;
+            }
+        }
+    } while (choice != EXIT);
 
-			try {
-				Case caseInfo = firm.getCaseByNumber(number3);
-				std::cout << "Номер дела: " << caseInfo.getCaseNumber() << "\n" << "Содержание: " << caseInfo.getContent() << "\n" << "Адвокат: "
-					<< caseInfo.getLawyer()->getName() << "\n" << "Клиент: " << caseInfo.getClient()->getName() << "\n";
-			}
-			catch (const std::exception& e)
-			{
-				std::cerr << "Ошибка: " << e.what() << "\n";
-			}
-			
-		}
-		case TASK5:
-		{
-			std::cout << "Введите ID клиента: \n";
-			int clientId;
-			std::cin >> clientId;
-
-			auto clientCases = firm.getClientCases(clientId);
-			if (clientCases.empty())
-			{
-				std::cout << "У клиента с ID " << clientId << " нет дел.\n";
-			}
-			else
-			{
-				std::cout << "Дела клиента с ID " << clientId << ":\n";
-				for (const auto& casePtr : clientCases)
-				{
-					if (casePtr)
-					{
-						std::cout << " - Номер: " << casePtr->getCaseNumber() << ", Содержание: " << casePtr->getContent() << "\n";
-					}
-				}
-			}
-			
-		}
-		case TASK6: {
-			std::cout << "Введите ID адвоката: \n";
-			int lawyerId;
-			std::cin >> lawyerId;
-
-			auto lawyerCases = firm.getLawyerCases(lawyerId);
-			if (lawyerCases.empty())
-			{
-				std::cout << " У адвоката с ID " << lawyerId << " нет дел.\n";
-			}
-			else
-			{
-				std::cout << "Дела адвоката с ID " << lawyerId << ":\n";
-				for (const auto& casePtr : lawyerCases)
-				{
-					if (casePtr)
-					{
-						std::cout << "  - Номер: " << casePtr->getCaseNumber() << ", Содержание: " << casePtr->getContent() << "\n";
-					}
-				}
-			}
-			
-		}
-		case EXIT: { std::cout << "Выход из программы.\n"; break; }
-		default: { std::cout << "Неверный выбор! Попробуйте снова.\n"; break; }
-		}
-	} while (choice != EXIT);
-
-	/*int b = 6;
-	while(b != 0)
-	{
-		std::cout << "Введите желаемую услугу:\n1.Показание списка услуг\n2.Клиенты по услуге\n3.Cвободные адвокаты по услуге\n4.Получить содержание дела по номеру\n5.Показать все дела клиента\n6.Показать все дела адвоката\n0.Выйти" << std::endl;
-		std::cin >> b;
-		//1 . Показание списка услуг
-		if (b == 1)
-		{
-			firm.showServices();
-		}
-		// 2. Клиенты по услуге 
-		if (b == 2)
-		{
-			std::cout << "Введите id услуги по какому запросу нужно вывести клиентов \n";
-			int number;
-			std::cin >> number;
-			std::cout << "Список клиентов \n";
-			auto civilClients = firm.getClientsByService(number);
-			for (const auto& client : civilClients)
-			{
-				std::cout << "ID: " << client.getId() << ", Имя: " << client.getName() << ", Контакты: " << client.getContactInfo() << "\n";
-			}
-		}
-		// 3 Cвободные адвокаты
-		if (b == 3) {
-			int number;
-			std::cout << "Введите id услуги: \n";
-			std::cin >> number;
-
-			std::cout << "Список свободных адвокатов по услуге " << number << ":\n";
-			auto availableLawyers = firm.getAvailableLawyersByService(number);
-
-			if (availableLawyers.empty()) {
-				std::cout << "Свободных адвокатов по этой услуге нет.\n";
-			}
-			else {
-				for (const auto& lawyer : availableLawyers) {
-					std::cout << "ID: " << lawyer.getId()
-						<< ", Имя: " << lawyer.getName()
-						<< "\n";
-				}
-			}
-		}		// Получить содержание дела по номеру
-		if (b == 4)
-		{
-			int number;
-			std::cout << "Введите номер дела \n";
-			std::cin >> number;
-
-			try {
-				Case caseInfo = firm.getCaseByNumber(number);
-				std::cout << "Номер дела: " << caseInfo.getCaseNumber() << "\n" << "Содержание: " << caseInfo.getContent() << "\n" << "Адвокат: "
-					<< caseInfo.getLawyer()->getName() << "\n" << "Клиент: " << caseInfo.getClient()->getName() << "\n";
-			}
-			catch (const std::exception& e)
-			{
-				std::cerr << "Ошибка: " << e.what() << "\n";
-			}
-		}
-		if (b == 5)
-		{
-			std::cout << "Введите ID клиента: \n";
-			int clientId;
-			std::cin >> clientId;
-			
-			auto clientCases = firm.getClientCases(clientId);
-			if (clientCases.empty())
-			{
-				std::cout << "У клиента с ID " << clientId << " нет дел.\n";
-			}
-			else
-			{
-				std::cout << "Дела клиента с ID " << clientId << ":\n";
-				for (const auto& casePtr : clientCases)
-				{
-					if (casePtr)
-					{
-						std::cout << " - Номер: " << casePtr->getCaseNumber() << ", Содержание: " << casePtr->getContent() << "\n";
-					}
-				}
-			}
-		}
-		if (b == 6)
-		{
-			std::cout << "Введите ID адвоката: \n";
-			int lawyerId;
-			std::cin >> lawyerId;
-
-			auto lawyerCases = firm.getLawyerCases(lawyerId);
-			if (lawyerCases.empty())
-			{
-				std::cout << " У адвоката с ID " << lawyerId << " нет дел.\n";
-			}
-			else
-			{
-				std::cout << "Дела адвоката с ID " << lawyerId << ":\n";
-				for (const auto& casePtr : lawyerCases)
-				{
-					if (casePtr)
-					{
-						std::cout << "  - Номер: " << casePtr->getCaseNumber() << ", Содержание: " << casePtr->getContent() << "\n";
-					}
-				}
-			}
-		}
-	}
-	*/
-	return 0;
+    return 0;
 }
