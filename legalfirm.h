@@ -16,20 +16,20 @@ private:
     std::vector<Lawyer> lawyers;
     std::vector<Case> cases;
 
-    // Вспомогательные методы для проверки уникальности
+    
     bool isServiceIdUnique(int id) const;
     bool isClientIdUnique(int id) const;
     bool isLawyerIdUnique(int id) const;
     bool isCaseNumberUnique(int caseNumber) const;
 
 public:
-    // Методы добавления с проверкой уникальности
+    
     bool addService(const Service& service);
     bool addClient(const Client& client);
     bool addLawyer(const Lawyer& lawyer);
     bool addCase(const Case& caseObj);
 
-    // Поиск по ID
+ 
     const Client* findClientById(int id) const;
     const Lawyer* findLawyerById(int id) const;
     const Service* findServiceById(int id) const;
