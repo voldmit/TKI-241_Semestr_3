@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-// Проверка уникальности ID
 bool LegalFirm::isServiceIdUnique(int id) const {
     return std::find_if(services.begin(), services.end(),
         [id](const Service& s) { return s.getId() == id; }) == services.end();
@@ -24,7 +23,7 @@ bool LegalFirm::isCaseNumberUnique(int caseNumber) const {
         [caseNumber](const Case& c) { return c.getCaseNumber() == caseNumber; }) == cases.end();
 }
 
-// Методы добавления с проверкой
+
 bool LegalFirm::addService(const Service& service) {
     if (!isServiceIdUnique(service.getId())) {
         std::cerr << "Ошибка: Услуга с ID " << service.getId() << " уже существует!\n";
